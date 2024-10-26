@@ -1,3 +1,6 @@
+enum TransactionType {income, expense}
+enum itemCategory {grocery, clothing, gas, bills, payments, transfers}
+
 class UserData {
   final String name;
   final String totalBalance;
