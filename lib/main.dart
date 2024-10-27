@@ -58,6 +58,48 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+class NameEntryPage extends StatelessWidget {
+  final Function(String) onSubmit;
+
+  NameEntryPage({required this.onSubmit});
+
+  final TextEditingController _nameController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Enter Name Here:",
+                style: TextStyle(fontSize: 24),
+              ),
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+              SizedBox(height: 20), // Spacing
+              ElevatedButton(
+                onPressed: () {
+                  final name = _nameController.text;
+                  if (name.isNotEmpty) {
+                    onSubmit(name);
+                  }
+                },
+                child: Text('Submit'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class MainNavigation extends StatefulWidget {
   final String username;
   final double incomeTotal;
