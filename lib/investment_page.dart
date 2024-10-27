@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class InvestmentPage extends StatefulWidget {
   final Function(double) onUpdateInvestmentsTotal;
@@ -12,8 +13,11 @@ class InvestmentPage extends StatefulWidget {
 class _InvestmentPageState extends State<InvestmentPage> {
   double investmentAmount = 0.0;
   final List<Map<String, dynamic>> investments = [];
+  final List<FlSpot> investmentHistory = [FlSpot(0, 0)]; // Initialize with a starting point
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+
+  int investmentIndex = 1;
 
   void _addInvestment() {
     if (investmentAmount > 0) {
@@ -130,6 +134,12 @@ class _InvestmentPageState extends State<InvestmentPage> {
   void _updateTotalInvestments() {
     double totalInvestments = investments.fold(0, (sum, item) => sum + item['amount']);
     widget.onUpdateInvestmentsTotal(totalInvestments);
+
+    setState(() {
+      // Safely update the investment history graph data
+      investmentHistory.add(FlSpot(investmentIndex.toDouble(), totalInvestments));
+      investmentIndex++;
+    });
   }
 
   @override
@@ -149,6 +159,8 @@ class _InvestmentPageState extends State<InvestmentPage> {
               title: 'Total Investments',
               amount: totalInvestments,
             ),
+            SizedBox(height: 16),
+            _buildInvestmentChart(),
             Expanded(
               child: ListView.builder(
                 itemCount: investments.length,
@@ -193,6 +205,31 @@ class _InvestmentPageState extends State<InvestmentPage> {
             style: TextStyle(fontSize: 48, color: Colors.white),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInvestmentChart() {
+    return Container(
+      height: 200,
+      padding: const EdgeInsets.all(16.0),
+      child: LineChart(
+        LineChartData(
+          gridData: FlGridData(show: false), // Hide grid lines for cleanliness
+          borderData: FlBorderData(show: false), // Hide borders around the chart
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)), // Hide left axis titles
+            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)), // Hide bottom axis titles
+          ),
+          lineBarsData: [
+            LineChartBarData(
+              spots: investmentHistory,
+              isCurved: true,
+              barWidth: 3,
+              dotData: FlDotData(show: false), // Hide dots for a cleaner line
+            ),
+          ],
+        ),
       ),
     );
   }
