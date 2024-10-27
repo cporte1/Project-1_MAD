@@ -6,7 +6,7 @@ class UserData {
   final String totalBalance;
   final String income;
   final String expense;
-  final List<Transactions> transactions;
+  final List<Transaction> transactions;
 
   const UserData({
     required this.name,
