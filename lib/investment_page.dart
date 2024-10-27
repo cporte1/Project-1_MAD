@@ -23,15 +23,68 @@ class _InvestmentPageState extends State<InvestmentPage> {
           'date': DateTime.now(),
           'name': _nameController.text,
         });
-        widget.onUpdateInvestmentsTotal(investments.fold<double>(
-            0, (previousValue, investment) => previousValue + investment['amount']));
+        _updateTotalInvestments();
         _amountController.clear();
         _nameController.clear();
       });
     }
   }
 
+  void _editInvestment(int index) {
+    final investment = investments[index];
+    _amountController.text = investment['amount'].toString();
+    _nameController.text = investment['name'];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Edit Investment"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Investment Name'),
+              ),
+              TextField(
+                controller: _amountController,
+                decoration: InputDecoration(labelText: 'Amount'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text("Save"),
+              onPressed: () {
+                setState(() {
+                  investments[index] = {
+                    'amount': double.tryParse(_amountController.text) ?? 0.0,
+                    'date': investment['date'],
+                    'name': _nameController.text,
+                  };
+                  _updateTotalInvestments();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showAddInvestmentDialog() {
+    _amountController.clear();
+    _nameController.clear();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -74,6 +127,11 @@ class _InvestmentPageState extends State<InvestmentPage> {
     );
   }
 
+  void _updateTotalInvestments() {
+    double totalInvestments = investments.fold(0, (sum, item) => sum + item['amount']);
+    widget.onUpdateInvestmentsTotal(totalInvestments);
+  }
+
   @override
   Widget build(BuildContext context) {
     double totalInvestments = investments.fold(0, (sum, item) => sum + item['amount']);
@@ -98,6 +156,7 @@ class _InvestmentPageState extends State<InvestmentPage> {
                   return ListTile(
                     title: Text('${investments[index]['name']} - \$${investments[index]['amount'].toStringAsFixed(2)}'),
                     subtitle: Text(investments[index]['date'].toString()),
+                    onTap: () => _editInvestment(index),
                   );
                 },
               ),
