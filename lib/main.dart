@@ -1,6 +1,5 @@
-import 'package:finance_management_app/TransactionData.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:finance_management_app/home_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -93,6 +92,15 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      HomePage(
+        username: widget.username,
+        incomeTotal: widget.incomeTotal,
+        expensesTotal: widget.expensesTotal,
+        investmentsTotal: widget.investmentsTotal,
+      ),
+
+    ];
 
     return Scaffold(
       body: _pages[_selectedIndex],
@@ -106,80 +114,6 @@ class _MainNavigationState extends State<MainNavigation> {
           BottomNavigationBarItem(icon: Icon(Icons.trending_up, color: Colors.purple), label: 'Investments'),
           BottomNavigationBarItem(icon: Icon(Icons.calculate, color: Colors.orange), label: 'Net Spending'),
         ],
-      ),
-    );
-  }
-}
-
-
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final newExpenseNameController = TextEditingController();
-  final newExpenseAmountController = TextEditingController();
-
-  void addExpense() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Add Expense'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-          TextField(
-            controller: newExpenseNameController,
-          ),
-          TextField(
-            controller: newExpenseAmountController,
-          ),
-        ],
-        ),
-        actions: [
-          MaterialButton(onPressed: save, child: Text('Save'),),
-          MaterialButton(onPressed: cancel, child: Text('Cancel'),),
-        ],
-    ),
-    );
-  }
-
-void save() {
-  Expense newExpense = Expense(
-    name: newExpenseNameController.text,
-    amount: newExpenseAmountController.text,
-    dateTime: DateTime.now,
-  );
-  Provider.of<ExpenseData>(context, listen: false).addExpense(newExpense);
-  Navigator.pop(context);
-  newExpenseNameController.clear();
-}
-
-void cancel() {
-  Navigator.pop(context);
-  newExpenseAmountController.clear();
-}
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ExpenseData>(
-      builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.grey,
-        floatingActionButton: FloatingActionButton(
-          onPressed: addExpense,
-          child: Icon(Icons.add),
-        ),
-        body: ListView.builder(
-          itemCount: value.getExpenseList().length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(value.getExpenseList()[index].name),
-            subtitle: Text(value.getExpenseList()[index].dateTime.toString()),
-            trailing: Text('\$' + value.getExpenseList()[index].amount),
-          ),
-        ),
       ),
     );
   }
