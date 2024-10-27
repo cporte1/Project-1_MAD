@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:finance_management_app/home_page.dart';
+import 'package:finance_management_app/income_page.dart';
+import 'package:finance_management_app/expense_page.dart';
+import 'package:finance_management_app/investment_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -141,7 +144,9 @@ class _MainNavigationState extends State<MainNavigation> {
         expensesTotal: widget.expensesTotal,
         investmentsTotal: widget.investmentsTotal,
       ),
-
+      IncomePage(onUpdateIncomeTotal: widget.onUpdateIncomeTotal),
+      ExpensePage(onUpdateExpensesTotal: widget.onUpdateExpensesTotal),
+      InvestmentPage(onUpdateInvestmentsTotal: widget.onUpdateInvestmentsTotal),
     ];
 
     return Scaffold(
